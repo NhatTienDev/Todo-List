@@ -38,7 +38,7 @@ const deleteTodo = `-- name: DeleteTodo :exec
 DELETE FROM todos WHERE id = $1
 `
 
-func (q *Queries) DeleteTodo(ctx context.Context, id int32) error {
+func (q *Queries) DeleteTodo(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteTodo, id)
 	return err
 }
@@ -47,7 +47,7 @@ const getTodoByID = `-- name: GetTodoByID :one
 SELECT id, title, description, is_completed, created_at, updated_at FROM todos WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetTodoByID(ctx context.Context, id int32) (Todo, error) {
+func (q *Queries) GetTodoByID(ctx context.Context, id int64) (Todo, error) {
 	row := q.db.QueryRowContext(ctx, getTodoByID, id)
 	var i Todo
 	err := row.Scan(
@@ -123,7 +123,7 @@ RETURNING id, title, description, is_completed, created_at, updated_at
 `
 
 type UpdateTodoParams struct {
-	ID          int32  `json:"id"`
+	ID          int64  `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	IsCompleted bool   `json:"is_completed"`
