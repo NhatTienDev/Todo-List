@@ -1,0 +1,12 @@
+version: "2"
+sql:
+  - schema: "db/migration/"
+    queries: "db/query/todos.sql"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "sqlc"
+        out: "internal/todo/repository/sqlc"
+        emit_json_tags: true
+        emit_prepared_queries: false
+        emit_interface: true
