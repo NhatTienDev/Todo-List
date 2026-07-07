@@ -6,7 +6,7 @@ import (
 	"github.com/nhattiendev/todo-list/response"
 )
 
-func (h *TodoHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (h *TodoHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	id, err := parseID(r)
 	if err != nil {
 		response.WriteErrorJSON(w, http.StatusBadRequest, "Invalid ID")
