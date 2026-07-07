@@ -1,4 +1,4 @@
-CREATE TABLE todos (
+CREATE TABLE IF NOT EXISTS todos (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
@@ -7,4 +7,4 @@ CREATE TABLE todos (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_todos_title ON todos(title);
+CREATE INDEX IF NOT EXISTS idx_todos_title ON todos(title);
