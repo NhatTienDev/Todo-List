@@ -17,8 +17,8 @@ type Todo struct {
 }
 
 var (
-	ErrTitleRequired = errors.New("The job title cannot be left blank")
-	ErrTodoNotFound  = errors.New("The job could not be found")
+	ErrTitleRequired = errors.New("The task title cannot be left blank")
+	ErrTodoNotFound  = errors.New("The task could not be found")
 )
 
 type TodoRepository interface {
