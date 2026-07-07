@@ -14,6 +14,12 @@ type createTodoRequest struct {
 	Description string `json:"description"`
 }
 
+// @Summary      Create a new task
+// @Tags         Todos
+// @Accept       json
+// @Produce      json
+// @Param        request body createTodoRequest true "Task creation payload"
+// @Router       /api/v1/todos [post]
 func (h *TodoHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	var req createTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

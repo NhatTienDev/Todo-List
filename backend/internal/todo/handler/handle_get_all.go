@@ -6,6 +6,13 @@ import (
 	"github.com/nhattiendev/todo-list/response"
 )
 
+// @Summary      Get all tasks
+// @Tags         Todos
+// @Accept       json
+// @Produce      json
+// @Param        search query string false "Search by title"
+// @Param        status query string false "Filter by status"
+// @Router       /api/v1/todos [get]
 func (h *TodoHandler) HandleGetAll(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
 	filterStatus := r.URL.Query().Get("status")

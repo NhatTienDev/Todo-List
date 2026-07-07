@@ -6,6 +6,12 @@ import (
 	"github.com/nhattiendev/todo-list/response"
 )
 
+// @Summary      Get task by ID
+// @Tags         Todos
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Task ID"
+// @Router       /api/v1/todos/{id} [get]
 func (h *TodoHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	id, err := parseID(r)
 	if err != nil {

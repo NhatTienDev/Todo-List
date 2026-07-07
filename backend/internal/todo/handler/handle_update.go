@@ -15,6 +15,13 @@ type updateTodoRequest struct {
 	IsCompleted bool   `json:"is_completed"`
 }
 
+// @Summary      Update an existing task
+// @Tags         Todos
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Task ID"
+// @Param        request body updateTodoRequest true "Task update payload"
+// @Router       /api/v1/todos/{id} [put]
 func (h *TodoHandler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	id, err := parseID(r)
 	if err != nil {

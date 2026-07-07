@@ -6,6 +6,12 @@ import (
 	"github.com/nhattiendev/todo-list/response"
 )
 
+// @Summary      Delete a task
+// @Tags         Todos
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Task ID"
+// @Router       /api/v1/todos/{id} [delete]
 func (h *TodoHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	id, err := parseID(r)
 	if err != nil {
