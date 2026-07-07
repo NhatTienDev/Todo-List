@@ -1,0 +1,113 @@
+basePath: /
+definitions:
+  internal_todo_handler.createTodoRequest:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  internal_todo_handler.updateTodoRequest:
+    properties:
+      description:
+        type: string
+      is_completed:
+        type: boolean
+      title:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: API Documentation for the Todo List Application.
+  title: Todo List API
+  version: "1.0"
+paths:
+  /api/v1/todos:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Search by title
+        in: query
+        name: search
+        type: string
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get all tasks
+      tags:
+      - Todos
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task creation payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_todo_handler.createTodoRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new task
+      tags:
+      - Todos
+  /api/v1/todos/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete a task
+      tags:
+      - Todos
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get task by ID
+      tags:
+      - Todos
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Task update payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_todo_handler.updateTodoRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update an existing task
+      tags:
+      - Todos
+swagger: "2.0"

@@ -11,11 +11,19 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	_ "github.com/nhattiendev/todo-list/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 	todoService "github.com/nhattiendev/todo-list/internal/todo/service"
 	todoHandler "github.com/nhattiendev/todo-list/internal/todo/handler"
 	todoRepository "github.com/nhattiendev/todo-list/internal/todo/repository"
 )
 
+// @title Todo List API
+// @version 1.0
+// @description API Documentation for the Todo List Application.
+
+// @host localhost:8081
+// @BasePath /
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -62,6 +70,10 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:" + bePort + "/swagger/doc.json"),
+	))
 	
 	tHandler.RegisterTodoRoutes(r)
 
@@ -71,6 +83,7 @@ func main() {
 	}
 
 	log.Printf("Starting server on port %s...", bePort)
+	log.Printf("Swagger UI available at http://localhost:%s/swagger/index.html", bePort)
 
 	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatalf("Error: Failed to start server: %v", err)
