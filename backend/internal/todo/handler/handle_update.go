@@ -10,9 +10,9 @@ import (
 )
 
 type updateTodoRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	IsCompleted bool   `json:"is_completed"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	IsCompleted *bool   `json:"is_completed"`
 }
 
 // @Summary      Update an existing task
@@ -39,6 +39,10 @@ func (h *TodoHandler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, domain.ErrTitleRequired) {
 			response.WriteErrorJSON(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		if errors.Is(err, domain.ErrTodoNotFound) {
+			response.WriteErrorJSON(w, http.StatusNotFound, err.Error())
 			return
 		}
 		response.WriteErrorJSON(w, http.StatusInternalServerError, "Error occurred while updating task")

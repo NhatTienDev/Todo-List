@@ -2,7 +2,9 @@ package handler
 
 import (
 	"net/http"
+	"errors"
 
+	"github.com/nhattiendev/todo-list/internal/todo/domain"
 	"github.com/nhattiendev/todo-list/response"
 )
 
@@ -20,6 +22,10 @@ func (h *TodoHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.todoSV.Delete(r.Context(), id); err != nil {
+		if errors.Is(err, domain.ErrTodoNotFound) {
+			response.WriteErrorJSON(w, http.StatusNotFound, err.Error())
+			return
+		}
 		response.WriteErrorJSON(w, http.StatusInternalServerError, "Error occurred while deleting task")
 		return
 	}

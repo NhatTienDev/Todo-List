@@ -43,10 +43,14 @@ func (r *todoRepository) CreateTodo(ctx context.Context, title string, descripti
 	return mapToTodoDomain(dbTodo), nil
 }
 
-func (r *todoRepository) GetTodos(ctx context.Context, search string, filterStatus string) ([]domain.Todo, error) {
+func (r *todoRepository) GetTodos(ctx context.Context, search string, filterStatus string, page int, limit int) (*domain.PaginatedResult, error) {
+	offset := (page - 1) * limit
+
 	arg := sqlc.GetTodosParams{
 		Search:       search,
 		FilterStatus: filterStatus,
+		PageLimit:    int32(limit),
+		PageOffset:   int32(offset),
 	}
 
 	dbTodo, err := r.q.GetTodos(ctx, arg)
@@ -59,7 +63,21 @@ func (r *todoRepository) GetTodos(ctx context.Context, search string, filterStat
 		todos = append(todos, *mapToTodoDomain(t))
 	}
 
-	return todos, nil
+	countArg := sqlc.CountTodosParams{
+		Search:       search,
+		FilterStatus: filterStatus,
+	}
+	total, err := r.q.CountTodos(ctx, countArg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.PaginatedResult{
+		Data:  todos,
+		Total: total,
+		Page:  page,
+		Limit: limit,
+	}, nil
 }
 
 func (r *todoRepository) GetTodoByID(ctx context.Context, id int64) (*domain.Todo, error) {
@@ -88,5 +106,12 @@ func (r *todoRepository) UpdateTodo(ctx context.Context, id int64, title string,
 }
 
 func (r *todoRepository) DeleteTodo(ctx context.Context, id int64) error {
-	return r.q.DeleteTodo(ctx, id)
+	rows, err := r.q.DeleteTodo(ctx, id)
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return domain.ErrTodoNotFound
+	}
+	return nil
 }

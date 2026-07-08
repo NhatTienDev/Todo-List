@@ -9,6 +9,29 @@ import (
 	"context"
 )
 
+const countTodos = `-- name: CountTodos :one
+SELECT COUNT(*) FROM todos
+WHERE 
+    ($1::text = '' OR title ILIKE '%' || $1 || '%')
+    AND (
+        $2::text = 'all' 
+        OR ($2::text = 'completed' AND is_completed = TRUE)
+        OR ($2::text = 'pending' AND is_completed = FALSE)
+    )
+`
+
+type CountTodosParams struct {
+	Search       string `json:"search"`
+	FilterStatus string `json:"filter_status"`
+}
+
+func (q *Queries) CountTodos(ctx context.Context, arg CountTodosParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countTodos, arg.Search, arg.FilterStatus)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createTodo = `-- name: CreateTodo :one
 INSERT INTO todos (title, description)
 VALUES ($1, $2)
@@ -34,13 +57,16 @@ func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, e
 	return i, err
 }
 
-const deleteTodo = `-- name: DeleteTodo :exec
+const deleteTodo = `-- name: DeleteTodo :execrows
 DELETE FROM todos WHERE id = $1
 `
 
-func (q *Queries) DeleteTodo(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteTodo, id)
-	return err
+func (q *Queries) DeleteTodo(ctx context.Context, id int64) (int64, error) {
+	result, err := q.db.ExecContext(ctx, deleteTodo, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const getTodoByID = `-- name: GetTodoByID :one
@@ -65,24 +91,30 @@ const getTodos = `-- name: GetTodos :many
 SELECT id, title, description, is_completed, created_at, updated_at 
 FROM todos
 WHERE 
-    -- Search: If an empty string is passed, skip it; if it contains text, search using ILIKE
     ($1::text = '' OR title ILIKE '%' || $1 || '%')
     AND (
-        -- Filter by status: 'all', 'completed', 'pending'
         $2::text = 'all' 
         OR ($2::text = 'completed' AND is_completed = TRUE)
         OR ($2::text = 'pending' AND is_completed = FALSE)
     )
 ORDER BY created_at DESC
+LIMIT $4::int OFFSET $3::int
 `
 
 type GetTodosParams struct {
 	Search       string `json:"search"`
 	FilterStatus string `json:"filter_status"`
+	PageOffset   int32  `json:"page_offset"`
+	PageLimit    int32  `json:"page_limit"`
 }
 
 func (q *Queries) GetTodos(ctx context.Context, arg GetTodosParams) ([]Todo, error) {
-	rows, err := q.db.QueryContext(ctx, getTodos, arg.Search, arg.FilterStatus)
+	rows, err := q.db.QueryContext(ctx, getTodos,
+		arg.Search,
+		arg.FilterStatus,
+		arg.PageOffset,
+		arg.PageLimit,
+	)
 	if err != nil {
 		return nil, err
 	}

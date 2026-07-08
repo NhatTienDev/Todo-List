@@ -9,8 +9,9 @@ import (
 )
 
 type Querier interface {
+	CountTodos(ctx context.Context, arg CountTodosParams) (int64, error)
 	CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error)
-	DeleteTodo(ctx context.Context, id int64) error
+	DeleteTodo(ctx context.Context, id int64) (int64, error)
 	GetTodoByID(ctx context.Context, id int64) (Todo, error)
 	GetTodos(ctx context.Context, arg GetTodosParams) ([]Todo, error)
 	UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error)

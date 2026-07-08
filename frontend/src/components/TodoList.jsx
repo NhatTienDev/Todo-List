@@ -2,7 +2,7 @@ import TodoItem from './TodoItem'
 
 export default function TodoList({ todos, onToggle, onEdit, onDelete }) {
     if (todos.length === 0) {
-        return <p className="empty-msg">No tasks found.</p>
+        return <p className="empty-msg">No task found.</p>
     }
 
     return (

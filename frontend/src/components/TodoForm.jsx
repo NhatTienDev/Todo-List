@@ -42,11 +42,9 @@ export default function TodoForm({ onSubmit, initialData, onCancel }) {
             />
             <div className="form-actions">
                 <button type="submit">{isEditing ? "Update" : "Add"}</button>
-                {isEditing && (
-                    <button type="button" className="btn-cancel" onClick={onCancel}>
-                        Cancel
-                    </button>
-                )}
+                <button type="button" className="btn-cancel" onClick={onCancel}>
+                    Cancel
+                </button>
             </div>
         </form>
     );

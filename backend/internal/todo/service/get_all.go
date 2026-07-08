@@ -7,14 +7,28 @@ import (
 	"github.com/nhattiendev/todo-list/internal/todo/domain"
 )
 
-func (s *todoService) GetAll(ctx context.Context, search string, filterStatus string) ([]domain.Todo, error) {
+func (s *todoService) GetAll(ctx context.Context, search string, filterStatus string, page int, limit int) (*domain.PaginatedResult, error) {
 	search = strings.TrimSpace(search)
 
 	filterStatus = strings.ToLower(strings.TrimSpace(filterStatus))
-	
-	if filterStatus != "completed" && filterStatus != "pending" {
+
+	switch filterStatus {
+	case "true", "completed":
+		filterStatus = "completed"
+	case "false", "pending":
+		filterStatus = "pending"
+	case "":
 		filterStatus = "all"
+	default:
+		return nil, domain.ErrInvalidFilterValue
 	}
 
-	return s.todoRepo.GetTodos(ctx, search, filterStatus)
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+
+	return s.todoRepo.GetTodos(ctx, search, filterStatus, page, limit)
 }

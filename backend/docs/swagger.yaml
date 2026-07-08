@@ -36,6 +36,14 @@ paths:
         in: query
         name: status
         type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses: {}
