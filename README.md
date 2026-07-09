@@ -27,6 +27,7 @@ A full-stack Todo List application built with **Go** (backend) and **React** (fr
 - Run the script, the script is the the same as the script of **backend/db/migration/schema.sql** to make sure the script is executed successfully without errors.
 
 ### 2. Backend
+From the backend directory:
 - Create your own .env file, the content you can see in the .env.example
 - Install direct dependencies (main libraries):
 ```bash
