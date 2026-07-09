@@ -23,35 +23,61 @@ A full-stack Todo List application built with **Go** (backend) and **React** (fr
 
 ## Setup
 ### 1. Database
-Create a PostgreSQL database and run the migration:
-
-```bash
-psql -U your_user -d your_db -f backend/db/migration/schema.sql
-```
+- Create a PostgreSQL database: right click to the Databases in pgAdmin4 and name the db for you.
+- Run the script, the script is the the same as the script of **backend/db/migration/schema.sql** to make sure the script is executed successfully without errors.
 
 ### 2. Backend
-
+- Create your own .env file, the content you can see in the .env.example
+- Install direct dependencies (main libraries):
 ```bash
-cd backend
-cp .env.example .env      # then edit DB_URL and BE_PORT
-go run ./cmd/api
+go get github.com/go-chi/chi/v5
+go get github.com/go-chi/cors
+go get github.com/joho/godotenv
+go get github.com/lib/pq
+go get github.com/swaggo/http-swagger
+go get github.com/swaggo/swag
 ```
 
-The API server starts at `http://localhost:8081` (or the port you set).
-Swagger UI: `http://localhost:8081/swagger/index.html`
+- Install dev tools:
+```bash
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+go install github.com/swaggo/swag/cmd/swag@latest
+go install github.com/air-verse/air@latest # Use for hot reload
+```
+
+- Use SQLC:<br>
+From the backend directory, run the following command if you have changes at **schema.sql** or **todos.sql**:
+```bash
+sqlc generate
+```
+- Build and run the backend to make the connection to PostgreSQL
+From the backend directory, run the following command:
+```bash
+# If you want to manually build and run the backend when you have change in source code:
+go build cmd/api/main.go
+./main.exe
+
+# If you want to automatically build and run whenever changes are detected:
+air init # Run this one time only when you first time use it, after that don't need to run this command again, you will see .air.toml created
+air # Run this every time you start to code, it handles for you the build and run process automatically
+```
+
+All things in the backend source code is ready, so after getting all libraries and installing tools.<br>
+Just run **air** to start backend server.
+
+API server starts at `http://localhost:8080` (or the port you set).<br>
+Swagger UI: `http://localhost:8080/swagger/index.html`.
 
 ### 3. Frontend
-
+From the frontend directory:
 ```bash
-cd frontend
-npm install
+npm i
 npm run dev
 ```
 
-The dev server starts at `http://localhost:5173` and proxies `/api` requests to the backend.
+Dev server starts at `http://localhost:5173`.
 
 ### API Endpoints
-
 | Method | Endpoint               | Description              |
 | ------ | ---------------------- | ------------------------ |
 | GET    | `/api/v1/todos`        | List tasks (paginated)   |
@@ -70,7 +96,6 @@ The dev server starts at `http://localhost:5173` and proxies `/api` requests to 
 | limit    | int    | 10      | Items per page                           |
 
 ### Project Structure
-
 ```
 backend/
 ├── cmd/api/           # Entry point
